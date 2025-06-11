@@ -332,11 +332,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         fontSize: 15,
                       ),
                     ),
-                    Text(
-                      'Login now',
-                      style: boldTextStyle.copyWith(
-                        color: greenColor,
-                        fontSize: 15,
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      child: Text(
+                        'Login now',
+                        style: boldTextStyle.copyWith(
+                          color: greenColor,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ],

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:medicine/main_screen.dart';
+import 'package:medicine/network/api/url_api.dart';
+import 'package:medicine/pages/register_screen.dart';
 import 'package:medicine/theme.dart';
 import 'package:medicine/widgets/button_primary.dart';
 import 'package:medicine/widgets/general_logo_space.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,6 +24,73 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _secureText = !_secureText;
     });
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  submitLogin() async {
+    var registerUrl = Uri.parse(BASEURL.apiLogin);
+    final response = await http.post(
+      registerUrl,
+      body: {
+        "email": emailController.text,
+        "password": passwordController.text,
+      },
+    );
+    final data = jsonDecode(response.body);
+    print(response.body);
+    int value = data['value'];
+    String message = data['message'];
+    if (value == 1) {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Information'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen()),
+                    (route) => false,
+                  );
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      setState(() {});
+    } else {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Information'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+    setState(() {});
   }
 
   @override
@@ -140,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         );
                       } else {
-                        // registerSubmit();
+                        submitLogin();
                       }
                     },
                   ),
@@ -156,11 +229,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 15,
                       ),
                     ),
-                    Text(
-                      'Create account',
-                      style: boldTextStyle.copyWith(
-                        color: greenColor,
-                        fontSize: 15,
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      child: Text(
+                        'Create account',
+                        style: boldTextStyle.copyWith(
+                          color: greenColor,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ],

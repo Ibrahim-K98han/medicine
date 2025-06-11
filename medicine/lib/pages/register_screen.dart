@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:medicine/network/api/url_api.dart';
+import 'package:medicine/pages/login_screen.dart';
 import 'package:medicine/theme.dart';
 import 'package:medicine/widgets/button_primary.dart';
 import 'package:medicine/widgets/general_logo_space.dart';
@@ -60,7 +61,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return AlertDialog(
             title: Text('Information'),
             content: Text(message),
-            actions: [TextButton(onPressed: () {}, child: Text('OK'))],
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (route) => false,
+                  );
+                },
+                child: Text('OK'),
+              ),
+            ],
           );
         },
       );

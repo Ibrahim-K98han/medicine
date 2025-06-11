@@ -20,6 +20,11 @@
             $query_insert_user = mysqli_query($connection, "INSERT INTO user VALUE('','$full_name','$email','$phone','$address','$password',NOW(),1)");
             if($query_insert_user){
                 $response['value']=1;
+                $response['fullname']=$full_name;
+                $response['email']=$email;
+                $response['phone']=$phone;
+                $response['address']=$address;
+                $response['password']=$password;
                 $response['message']='Yeah, Registration is successful.Please log in with your account';
                 echo json_encode($response);
             }else{

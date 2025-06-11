@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:medicine/network/api/url_api.dart';
 import 'package:medicine/theme.dart';
 import 'package:medicine/widgets/button_primary.dart';
 import 'package:medicine/widgets/general_logo_space.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -11,11 +15,76 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   bool _secureText = true;
   showHide() {
     setState(() {
       _secureText = !_secureText;
     });
+  }
+
+  registerSubmit() async {
+    var registerUrl = Uri.parse(BASEURL.apiRegister);
+    final response = await http.post(
+      registerUrl,
+      body: {
+        "fullname": fullNameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "address": addressController.text,
+        "password": passwordController.text,
+      },
+    );
+    final data = jsonDecode(response.body);
+    print(response.body);
+    int value = data['value'];
+    String message = data['message'];
+    if (value == 1) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Information'),
+            content: Text(message),
+            actions: [TextButton(onPressed: () {}, child: Text('OK'))],
+          );
+        },
+      );
+      setState(() {});
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Information'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+    setState(() {});
   }
 
   @override
@@ -50,6 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextFormField(
+                    controller: fullNameController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: greyLightColor, width: 1),
@@ -80,6 +150,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextFormField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: greyLightColor, width: 1),
@@ -110,6 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextFormField(
+                    controller: phoneController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: greyLightColor, width: 1),
@@ -141,6 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextFormField(
+                    controller: addressController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: greyLightColor, width: 1),
@@ -172,6 +245,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextFormField(
+                    controller: passwordController,
                     obscureText: _secureText,
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
@@ -204,7 +278,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 50),
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: ButtonPrimary(text: 'REGISTER', onTap: () {}),
+                  child: ButtonPrimary(
+                    text: 'REGISTER',
+                    onTap: () {
+                      if (fullNameController.text.isEmpty ||
+                          emailController.text.isEmpty ||
+                          phoneController.text.isEmpty ||
+                          addressController.text.isEmpty ||
+                          passwordController.text.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Warning !!'),
+                              content: Text('Please, Enter The Fields'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        registerSubmit();
+                      }
+                    },
+                  ),
                 ),
                 SizedBox(height: 16),
                 Row(

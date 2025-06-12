@@ -24,10 +24,14 @@ class CardProduct extends StatelessWidget {
         children: [
           Image.network(imageProduct.toString(), width: 115, height: 76),
           SizedBox(height: 16),
-          Text(
-            nameProduct.toString(),
-            style: regulerTextStyle,
-            textAlign: TextAlign.center,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              nameProduct.toString(),
+              style: regulerTextStyle,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           SizedBox(height: 14),
           Text(price.toString(), style: boldTextStyle),

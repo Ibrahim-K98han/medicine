@@ -11,7 +11,7 @@ class CardCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.network(imageCategory.toString(), width: 65),
+        Image.asset('${imageCategory.toString()}', width: 65),
         Text(
           nameCategory.toString(),
           style: mediumTextStyle.copyWith(fontSize: 10),

@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:medicine/network/api/url_api.dart';
+import 'package:medicine/network/model/product_model.dart';
 import 'package:medicine/theme.dart';
+import 'package:http/http.dart' as http;
+import 'package:medicine/widgets/card_category.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +15,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<ProductModel> listCategory = [];
+  getCategory() async {
+    listCategory.clear();
+    var urlCategory = Uri.parse(BASEURL.categoryWithProduct);
+    final response = await http.get(urlCategory);
+    if (response.statusCode == 200) {
+      setState(() {
+        final data = jsonDecode(response.body);
+        for (Map item in data) {
+          listCategory.add(ProductModel.fromJson(item));
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    getCategory();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +90,20 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               'Medicine & Vitamins by Category',
               style: regulerTextStyle.copyWith(fontSize: 16),
+            ),
+            GridView.builder(
+              itemCount: listCategory.length,
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+              ),
+              itemBuilder: (context, index) {
+                final x = listCategory[index];
+                return CardCategory(
+                  imageCategory: x.image,
+                  nameCategory: x.category,
+                );
+              },
             ),
           ],
         ),

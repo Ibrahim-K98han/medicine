@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:medicine/main_screen.dart';
 import 'package:medicine/network/api/url_api.dart';
+import 'package:medicine/network/model/pref_profile.dart';
 import 'package:medicine/pages/register_screen.dart';
 import 'package:medicine/theme.dart';
 import 'package:medicine/widgets/button_primary.dart';
 import 'package:medicine/widgets/general_logo_space.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -46,7 +48,15 @@ class _LoginScreenState extends State<LoginScreen> {
     print(response.body);
     int value = data['value'];
     String message = data['message'];
+    String idUser = data['user_id'];
+    String name = data['name'];
+    String email = data['email'];
+    String phone = data['phone'];
+    String address = data['address'];
+    String createdAt = data['created_at'];
+
     if (value == 1) {
+      savePref(idUser, name, email, phone, address, createdAt);
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -91,6 +101,23 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
     setState(() {});
+  }
+
+  savePref(
+    String idUser,
+    String name,
+    String email,
+    String phone,
+    String address,
+    String createdAt,
+  ) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString(PrefProfile.idUser, idUser);
+    sharedPreferences.setString(PrefProfile.name, name);
+    sharedPreferences.setString(PrefProfile.email, email);
+    sharedPreferences.setString(PrefProfile.phone, phone);
+    sharedPreferences.setString(PrefProfile.address, address);
+    sharedPreferences.setString(PrefProfile.createdAt, createdAt);
   }
 
   @override
